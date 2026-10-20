@@ -33,6 +33,14 @@ Or pass the WordPress installation path:
 bash wp-url-replace.sh /var/www/html/site
 ```
 
+For a one-line download and run, save the script to a temporary file first so its prompts can read from your terminal:
+
+```bash
+curl -fsSL -H "Cache-Control: no-cache" https://raw.githubusercontent.com/Nsharma-04/wp-url-search-replace/main/wp-url-replace.sh -o /tmp/wp-url-replace.sh && bash /tmp/wp-url-replace.sh /var/www/html/site
+```
+
+Do not pipe the script directly into `bash`; it is interactive and needs terminal input.
+
 The old URL prompt is prefilled from the WordPress `siteurl` option and remains editable; use the arrow keys to change it if needed. Enter the new URL manually. Choose **Dry run** first to preview database changes. Choose **Proceed** only after reviewing the preview and confirming the URLs. The script offers a timestamped SQL export before it writes changes.
 
 ## Notes
@@ -42,4 +50,3 @@ The old URL prompt is prefilled from the WordPress `siteurl` option and remains 
 - The third pass replaces the domain text wherever it appears, including protocol-less links and text values.
 - WordPress GUID values are intentionally left unchanged.
 - This script changes database contents. Keep a verified backup and review the dry-run output before applying it, especially on multisite or customized installations.
-
