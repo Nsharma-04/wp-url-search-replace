@@ -10,7 +10,7 @@ The script checks that WP-CLI is available and that the selected path contains a
 2. `http://old-domain` → `http://new-domain`
 3. `old-domain` → `new-domain`, to catch protocol-less occurrences
 
-It searches all tables with the WordPress table prefix, skips the `guid` column, uses WP-CLI's precise recursive object handling, and reports changed rows. In apply mode, it offers to export a SQL database backup first, then flushes the cache and rewrite rules after replacement.
+It searches all tables with the WordPress table prefix, skips the `guid` column, uses WP-CLI's precise recursive object handling, and reports changed rows. In apply mode, it offers to export a SQL database backup first, then flushes the WordPress object cache, purges LiteSpeed Cache when its WP-CLI command is registered, and flushes rewrite rules. If Cloudflare or another CDN is enabled, purge that cache separately so visitors receive the updated URLs.
 
 ## Requirements
 
