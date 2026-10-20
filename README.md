@@ -33,7 +33,7 @@ Or pass the WordPress installation path:
 bash wp-url-replace.sh /var/www/html/site
 ```
 
-Enter the old and new URLs when prompted. Choose **Dry run** first to preview database changes. Choose **Proceed** only after reviewing the preview and confirming the URLs. The script offers a timestamped SQL export before it writes changes.
+The old URL prompt is prefilled from the WordPress `siteurl` option and remains editable; use the arrow keys to change it if needed. Enter the new URL manually. Choose **Dry run** first to preview database changes. Choose **Proceed** only after reviewing the preview and confirming the URLs. The script offers a timestamped SQL export before it writes changes.
 
 ## Notes
 
