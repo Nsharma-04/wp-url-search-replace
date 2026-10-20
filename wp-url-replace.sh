@@ -53,17 +53,18 @@ strip_url() {
 }
 
 # ---------- Header ----------
+CURRENT_SITEURL="$("${WP[@]}" option get siteurl 2>/dev/null)"
 clear
 echo -e "${BOLD}============================================${NC}"
 echo -e "${BOLD}     WordPress URL Search & Replace Tool     ${NC}"
 echo -e "${BOLD}============================================${NC}"
 echo "WordPress path : $WP_PATH"
-echo "Current siteurl: $("${WP[@]}" option get siteurl 2>/dev/null)"
+echo "Current siteurl: $CURRENT_SITEURL"
 echo
 
 # ---------- Input ----------
 while true; do
-    read -e -r -p "Enter the OLD URL (e.g. https://old-domain.com, http://old-domain.com, or old-domain.com): " OLD_INPUT
+    read -e -r -i "$CURRENT_SITEURL" -p "Enter the OLD URL (prefilled from siteurl; edit if needed): " OLD_INPUT
     OLD_INPUT="$(echo "$OLD_INPUT" | xargs)"
     [[ -n "$OLD_INPUT" && "$OLD_INPUT" != *" "* ]] && break
     error "The old URL cannot be empty or contain spaces."
