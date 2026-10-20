@@ -52,14 +52,6 @@ strip_url() {
     echo "$url"
 }
 
-# Normalize URLs to HTTPS, regardless of the protocol entered.
-with_scheme() {
-    local url="${1%/}"
-    url="${url#http://}"
-    url="${url#https://}"
-    echo "https://$url"
-}
-
 # ---------- Header ----------
 clear
 echo -e "${BOLD}============================================${NC}"
@@ -71,14 +63,14 @@ echo
 
 # ---------- Input ----------
 while true; do
-    read -rp "Enter the OLD URL (e.g. https://old-domain.com): " OLD_INPUT
+    read -e -r -p "Enter the OLD URL (e.g. https://old-domain.com, http://old-domain.com, or old-domain.com): " OLD_INPUT
     OLD_INPUT="$(echo "$OLD_INPUT" | xargs)"
     [[ -n "$OLD_INPUT" && "$OLD_INPUT" != *" "* ]] && break
     error "The old URL cannot be empty or contain spaces."
 done
 
 while true; do
-    read -rp "Enter the NEW URL (e.g. https://new-domain.com): " NEW_INPUT
+    read -e -r -p "Enter the NEW URL (e.g. https://new-domain.com, http://new-domain.com, or new-domain.com): " NEW_INPUT
     NEW_INPUT="$(echo "$NEW_INPUT" | xargs)"
     [[ -n "$NEW_INPUT" && "$NEW_INPUT" != *" "* ]] && break
     error "The new URL cannot be empty or contain spaces."
@@ -86,9 +78,8 @@ done
 
 OLD_DOMAIN="$(strip_url "$OLD_INPUT")"
 NEW_DOMAIN="$(strip_url "$NEW_INPUT")"
-NEW_URL="$(with_scheme "$NEW_INPUT")"
 
-if [[ "$(with_scheme "$OLD_INPUT")" == "$NEW_URL" ]]; then
+if [[ "$OLD_DOMAIN" == "$NEW_DOMAIN" ]]; then
     error "The old and new URLs are the same. Nothing to replace."
     exit 1
 fi
@@ -96,8 +87,8 @@ fi
 # ---------- Confirmation ----------
 echo
 echo -e "${BOLD}The following replacements will be made:${NC}"
-printf "  1. %-40s ->  %s\n" "https://$OLD_DOMAIN" "$NEW_URL"
-printf "  2. %-40s ->  %s\n" "http://$OLD_DOMAIN"  "$NEW_URL"
+printf "  1. %-40s ->  %s\n" "https://$OLD_DOMAIN" "https://$NEW_DOMAIN"
+printf "  2. %-40s ->  %s\n" "http://$OLD_DOMAIN"  "http://$NEW_DOMAIN"
 printf "  3. %-40s ->  %s\n" "$OLD_DOMAIN"         "$NEW_DOMAIN"
 echo
 warn "Please make sure both URLs are correct."
@@ -153,8 +144,8 @@ run_replace() {
     fi
 }
 
-run_replace 1 "https://$OLD_DOMAIN" "$NEW_URL"
-run_replace 2 "http://$OLD_DOMAIN"  "$NEW_URL"
+run_replace 1 "https://$OLD_DOMAIN" "https://$NEW_DOMAIN"
+run_replace 2 "http://$OLD_DOMAIN"  "http://$NEW_DOMAIN"
 run_replace 3 "$OLD_DOMAIN"         "$NEW_DOMAIN"
 
 # ---------- Finish ----------
