@@ -24,6 +24,13 @@ success() { echo -e "${GREEN}$*${NC}"; }
 warn()    { echo -e "${YELLOW}$*${NC}"; }
 error()   { echo -e "${RED}Error: $*${NC}" >&2; }
 
+# This script needs an interactive terminal for its prompts. When piped directly
+# into bash, stdin contains the script itself rather than the user's responses.
+if [[ ! -t 0 ]]; then
+    error "Interactive terminal required. Download this script to a file, then run it with bash; do not pipe it directly into bash."
+    exit 1
+fi
+
 # ---------- Pre-checks ----------
 WP_PATH="${1:-$(pwd)}"
 
@@ -64,14 +71,20 @@ echo
 
 # ---------- Input ----------
 while true; do
-    read -e -r -i "$CURRENT_SITEURL" -p "Enter the OLD URL (prefilled from siteurl; edit if needed): " OLD_INPUT
+    if ! read -e -r -i "$CURRENT_SITEURL" -p "Enter the OLD URL (prefilled from siteurl; edit if needed): " OLD_INPUT; then
+        error "No old URL was entered. Run the script in an interactive terminal and try again."
+        exit 1
+    fi
     OLD_INPUT="$(echo "$OLD_INPUT" | xargs)"
     [[ -n "$OLD_INPUT" && "$OLD_INPUT" != *" "* ]] && break
     error "The old URL cannot be empty or contain spaces."
 done
 
 while true; do
-    read -e -r -p "Enter the NEW URL (e.g. https://new-domain.com, http://new-domain.com, or new-domain.com): " NEW_INPUT
+    if ! read -e -r -p "Enter the NEW URL (e.g. https://new-domain.com, http://new-domain.com, or new-domain.com): " NEW_INPUT; then
+        error "No new URL was entered. Run the script in an interactive terminal and try again."
+        exit 1
+    fi
     NEW_INPUT="$(echo "$NEW_INPUT" | xargs)"
     [[ -n "$NEW_INPUT" && "$NEW_INPUT" != *" "* ]] && break
     error "The new URL cannot be empty or contain spaces."
@@ -93,7 +106,10 @@ printf "  2. %-40s ->  %s\n" "http://$OLD_DOMAIN"  "http://$NEW_DOMAIN"
 printf "  3. %-40s ->  %s\n" "$OLD_DOMAIN"         "$NEW_DOMAIN"
 echo
 warn "Please make sure both URLs are correct."
-read -rp "Press Enter to continue, or Ctrl+C to cancel... " _
+if ! read -r -p "Press Enter to continue, or Ctrl+C to cancel... " _; then
+    error "Input ended before confirmation. No changes were made."
+    exit 1
+fi
 
 # ---------- Mode selection ----------
 echo
@@ -102,7 +118,10 @@ echo "  1) Dry run  (preview changes only, nothing is saved)"
 echo "  2) Proceed to replace URL  (changes are written to the database)"
 echo
 while true; do
-    read -rp "Enter your choice [1-2] and press Enter: " CHOICE
+    if ! read -r -p "Enter your choice [1-2] and press Enter: " CHOICE; then
+        error "Input ended before a mode was selected. No changes were made."
+        exit 1
+    fi
     case "$CHOICE" in
         1|2) break ;;
         *)   error "Invalid choice. Please enter 1 or 2." ;;
@@ -119,7 +138,10 @@ else
     MODE_FLAGS=()
     echo
     warn "You are about to modify the database permanently."
-    read -rp "Create a database backup first? [Y/n]: " BACKUP
+    if ! read -r -p "Create a database backup first? [Y/n]: " BACKUP; then
+        error "Input ended before the backup choice. No changes were made."
+        exit 1
+    fi
     if [[ ! "$BACKUP" =~ ^[Nn]$ ]]; then
         BACKUP_FILE="$WP_PATH/db-backup-$(date +%Y%m%d-%H%M%S).sql"
         info "Exporting database to: $BACKUP_FILE"
