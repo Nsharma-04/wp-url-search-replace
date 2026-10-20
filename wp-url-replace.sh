@@ -52,14 +52,12 @@ strip_url() {
     echo "$url"
 }
 
-# Make sure the new URL has a protocol (default to https)
+# Normalize URLs to HTTPS, regardless of the protocol entered.
 with_scheme() {
     local url="${1%/}"
-    if [[ "$url" =~ ^https?:// ]]; then
-        echo "$url"
-    else
-        echo "https://$url"
-    fi
+    url="${url#http://}"
+    url="${url#https://}"
+    echo "https://$url"
 }
 
 # ---------- Header ----------
