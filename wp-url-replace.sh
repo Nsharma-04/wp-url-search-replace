@@ -17,7 +17,7 @@ set -uo pipefail
 
 # ---------- Colors ----------
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
-CYAN='\033[0;36m'; BOLD='\033[1m'; NC='\033[0m'
+CYAN='\033[0;36m'; BOLD='\033[1m'; NC='\033[0m'; ITALIC='\033[3m'
 
 info()    { echo -e "${CYAN}$*${NC}"; }
 success() { echo -e "${GREEN}$*${NC}"; }
@@ -183,6 +183,5 @@ else
     success "URL replacement completed successfully."
     echo "New siteurl: $("${WP[@]}" option get siteurl 2>/dev/null)"
     [[ -n "${BACKUP_FILE:-}" ]] && echo "Backup file: $BACKUP_FILE"
-    echo -e "${BOLD}${YELLOW}CDN CACHE: If this site uses Cloudflare or another CDN, purge its cache separately so visitors receive the updated URLs.${NC}"
+    printf '%b\n' "${BOLD}${YELLOW}${ITALIC}CDN CACHE: If this site uses Cloudflare or another CDN, purge its cache separately so visitors receive the updated URLs.${NC}"
 fi
-
