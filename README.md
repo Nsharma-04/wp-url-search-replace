@@ -33,10 +33,10 @@ Or pass the WordPress installation path:
 bash wp-url-replace.sh /var/www/html/site
 ```
 
-For a one-line download and run, save the script to a temporary file first so its prompts can read from your terminal:
+From the WordPress root, download the script to the current directory and run it:
 
 ```bash
-curl -fsSL -H "Cache-Control: no-cache" https://raw.githubusercontent.com/Nsharma-04/wp-url-search-replace/main/wp-url-replace.sh -o /tmp/wp-url-replace.sh && bash /tmp/wp-url-replace.sh /var/www/html/site
+curl -fsSL https://raw.githubusercontent.com/Nsharma-04/wp-url-search-replace/main/wp-url-replace.sh -o wp-url-replace.sh && bash wp-url-replace.sh
 ```
 
 Do not pipe the script directly into `bash`; it is interactive and needs terminal input.
