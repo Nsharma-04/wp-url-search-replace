@@ -37,7 +37,7 @@ Enter the old and new URLs when prompted. Choose **Dry run** first to preview da
 
 ## Notes
 
-- URLs without a scheme are treated as HTTPS when forming the replacement URL.
+- The destination URL is always normalized to HTTPS, whether you enter it with `http://`, `https://`, or no scheme.
 - The third pass replaces the domain text wherever it appears, including protocol-less links and text values.
 - WordPress GUID values are intentionally left unchanged.
 - This script changes database contents. Keep a verified backup and review the dry-run output before applying it, especially on multisite or customized installations.
