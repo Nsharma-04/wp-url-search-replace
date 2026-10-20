@@ -183,6 +183,6 @@ else
     success "URL replacement completed successfully."
     echo "New siteurl: $("${WP[@]}" option get siteurl 2>/dev/null)"
     [[ -n "${BACKUP_FILE:-}" ]] && echo "Backup file: $BACKUP_FILE"
-    echo "If this site uses Cloudflare or another CDN, purge its cache separately so visitors receive the updated URLs."
+    echo -e "${BOLD}${YELLOW}CDN CACHE: If this site uses Cloudflare or another CDN, purge its cache separately so visitors receive the updated URLs.${NC}"
 fi
 
