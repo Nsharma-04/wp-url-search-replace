@@ -155,11 +155,34 @@ if [[ "$CHOICE" == "1" ]]; then
     success "Dry run completed. Review the results above."
     echo "Run the script again and choose option 2 to apply the changes."
 else
-    info "Flushing cache and rewrite rules..."
-    "${WP[@]}" cache flush >/dev/null 2>&1
-    "${WP[@]}" rewrite flush >/dev/null 2>&1
+    info "Flushing the WordPress object cache..."
+    if "${WP[@]}" cache flush; then
+        success "WordPress object cache flushed."
+    else
+        warn "WordPress object cache flush failed."
+    fi
+
+    if "${WP[@]}" cli has-command litespeed-purge >/dev/null 2>&1; then
+        info "Purging the LiteSpeed cache..."
+        if "${WP[@]}" litespeed-purge all; then
+            success "LiteSpeed cache purged."
+        else
+            warn "LiteSpeed cache purge failed."
+        fi
+    else
+        info "LiteSpeed Cache WP-CLI command not found; skipping the optional LiteSpeed purge."
+    fi
+
+    info "Flushing WordPress rewrite rules..."
+    if "${WP[@]}" rewrite flush; then
+        success "WordPress rewrite rules flushed."
+    else
+        warn "WordPress rewrite rules flush failed."
+    fi
+
     success "URL replacement completed successfully."
     echo "New siteurl: $("${WP[@]}" option get siteurl 2>/dev/null)"
     [[ -n "${BACKUP_FILE:-}" ]] && echo "Backup file: $BACKUP_FILE"
+    echo "If this site uses Cloudflare or another CDN, purge its cache separately so visitors receive the updated URLs."
 fi
 
